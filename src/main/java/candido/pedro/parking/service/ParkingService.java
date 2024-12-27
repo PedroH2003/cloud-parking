@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import candido.pedro.parking.exception.ParkingNotFoundException;
 import candido.pedro.parking.model.Parking;
 
 @Service
@@ -29,8 +30,14 @@ public class ParkingService {
         return parkingMap.values().stream().collect(Collectors.toList());
     }
 
-    public Parking findById(String id){
-        return parkingMap.get(id);
+    public Parking findById(String id){ 
+        Parking parking = parkingMap.get(id);
+        
+        if(parking == null){
+            throw new ParkingNotFoundException(id);
+        }
+
+        return parking;
     }
 
     public Parking create(Parking parkingCreate){
@@ -41,9 +48,27 @@ public class ParkingService {
         return parkingCreate;
     }
 
+    public void delete(String id) {
+        findById(id);
+        parkingMap.remove(id);
+    }
+
+    public Parking update(Parking parkingCreate, String id){
+        Parking parking = findById(id);
+        parking.setColor(parkingCreate.getColor());
+        parkingMap.replace(id, parking);
+        return parking;
+    }
+
+    public Parking exit(String id){
+        //recuperar o estacionado
+        //atualizar data de saída
+        //calcular o valor
+        return null;
+    }
+    
     private static String getUUID() {
         return UUID.randomUUID().toString().replace("-", "");
     }
-    
 
 }

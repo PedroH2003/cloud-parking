@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +66,37 @@ public class ParkingController {
         Parking parking = parkingService.create(parkingCreate); 
         ParkingDTO result = parkingMapper.toParkingDTO(parking);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+    
+    @PutMapping("/{id}")
+    @Operation(
+        summary = "Update",
+        description = "Atualiza um veículo no sistema de estacionamento"
+    )
+    public ResponseEntity<ParkingDTO> update(@PathVariable String id, @RequestBody ParkingCreateDTO parkingCreateDTO){
+        Parking parkingUpdate = parkingMapper.toParkingCreate(parkingCreateDTO);
+        Parking parking = parkingService.update(parkingUpdate, id); 
+        return ResponseEntity.ok(parkingMapper.toParkingDTO(parking));
+    }
+    
+    @PostMapping("/{id}")
+    @Operation(
+        summary = "Exit",
+        description = "Calcula o preço do estacionamento quando o sai"
+    )
+    public ResponseEntity<ParkingDTO> exit(@PathVariable String id){
+        Parking parking = parkingService.exit(id); 
+        return ResponseEntity.ok(parkingMapper.toParkingDTO(parking));
     }    
+
+    @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Delete",
+        description = "Deleta um veículo do sistema de estacionamento"
+    )
+    public ResponseEntity delete(@PathVariable String id){
+        parkingService.delete(id); 
+        return ResponseEntity.noContent().build();
+    }
 
 }
